@@ -1,24 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import 'assets/app.scss';
+import {
+  Switch,
+  Route
+} from 'react-router-dom'
+import Appbar from 'components/appbar/Appbar'
+import Footer from 'components/footer/Footer'
+import Home from 'screens/Home'
+import { useSelector } from 'react-redux';
 
-function App() {
+const App = () => {
+  const appState = useSelector(state => state.appReducer)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={`App theme-${appState.isDark ? 'dark' : 'light'}`}>
+      <Appbar />
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+      </Switch>
+      <Footer />
     </div>
   );
 }

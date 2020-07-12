@@ -1,0 +1,28 @@
+.list-view {
+    height: 100%;
+    overflow-y: scroll;
+    padding-bottom: 80px;
+    .list-view-loading {
+        &.is-active {
+            visibility: visible;
+        }
+        visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        svg {
+            animation: rotate 1.5s cubic-bezier(.26,.16,.18,.88) infinite;
+        }
+    }
+    .list-view-end {
+        &.is-active {
+            visibility: visible;
+        }
+        visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+    }
+}

@@ -1,0 +1,103 @@
+@import 'assets/theme/theme.scss';
+
+.card {
+    min-height: 280px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    .card-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 16px;
+    }
+    .card-body {
+        padding: 4px 24px;
+        pre {
+            word-break: break-word;
+            white-space: break-spaces;
+            font-size: 16px;
+        }
+    }
+    .card-footer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        .card-footer-last-updated {
+            width: 150px;
+            font-size: 10px;
+            word-break: break-word;
+            white-space: break-spaces;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-footer-likes {
+            flex: 1;
+        }
+    }
+    .card-expand-controller {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 0;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    .card-expand {
+        height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        .card-expand-row {
+            display: flex;
+            flex: 1;
+            margin: 0 16px;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            .card-expand-item {
+                flex: 1;
+                margin: 0 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+            }
+        }
+        &.is-active {
+            height: 100px;
+        }
+    }
+}
+
+@each $themeKey, $theme in $themes {
+    .App.theme-#{$themeKey} {
+        .card {
+            .card-expand-controller {
+                &:hover {
+                    border-top: 1px solid map-get($map: $theme, $key: 'primary');
+                    border-bottom: 1px solid map-get($map: $theme, $key: 'primary');
+                }
+            }
+            .card-expand {
+                .card-expand-row {
+                    .card-expand-item {
+                        &:not(:first-of-type) {
+                            border-left: 1px solid map-get($map: $theme, $key: 'primary');    
+                        }
+                    }
+                    &:not(:first-of-type) {
+                        border-top: 1px solid map-get($map: $theme, $key: 'primary');
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+.content-body {
+    height: 100%;
+    .content-fixed-top {
+        position: sticky;
+        padding: 16px;
+        top: 4px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: 200;
+    }
+    .content-main {
+        padding: 16px;
+        margin-top: 16px;
+        overflow-y: scroll;
+        height: 0;
+        &.is-active {
+            height: calc(100vh - 320px - 32px);
+        }
+        pre {
+            line-height: 2.5em;
+            word-break: break-word;
+            white-space: break-spaces;
+            font-size: 16px;
+        }
+    }
+}

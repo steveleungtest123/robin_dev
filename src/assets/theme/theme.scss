@@ -1,0 +1,23 @@
+$themes: (
+    light: (
+        primary: #FDB755,
+        secondary: #FDCF8D,
+        backgroundColor: #FFEEE2,
+        textColor: #1E1E1E,
+        scrollBarColor: #1E1E1E,
+        scrollBarBackGroundColor: #696969
+    ),
+    dark: (
+        primary: #1E1E1E,
+        secondary: #2D2D2D,
+        backgroundColor: #333,
+        textColor: #FDFDFD,
+        scrollBarColor: #FDB755,
+        scrollBarBackGroundColor: #FFEEE2
+    )
+);
+
+:export {
+    darkTextColor: #FDFDFD;
+    lightTextColor: #1E1E1E;
+}

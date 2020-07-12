@@ -1,0 +1,94 @@
+@import './theme/theme.scss';
+@import './constants.scss';
+@import './animation.scss';
+
+* {
+    box-sizing: border-box;
+}
+.App {
+    * {
+        transition: all .3s ease-in-out;
+    }
+}
+body, html {
+    height: 100vh;
+    width: 100vw;
+
+    ::-webkit-scrollbar {
+        width: 0.2em;
+        height: 0.2em;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        outline: 1px solid slategrey;
+    }
+}
+.App, #root {
+    height: 100%;
+    width: 100%;
+}
+.columns {
+    display: flex;
+    flex-direction: row;
+}
+@for $i from 1 to 12 {
+    .col-#{$i} {
+        width: percentage(1 / 12 * $i);
+        min-height: 55px;
+    }
+}
+.container {
+    width: 70%;
+    margin: 0 auto;
+    @media screen and (max-width: map-get($map: $breakpoints, $key: 'md')){
+        width: 100%;
+    }
+}
+h1 {
+    font-size: 36px;
+}
+h2 {
+    font-size: 32px;
+}
+h3 {
+    font-size: 28px;
+}
+h4 {
+    font-size: 24px;
+}
+h5 {
+    font-size: 22px;
+}
+h6 {
+    font-size: 18px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin-inline-end: 0;
+    margin-inline-start: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+@each $themeKey, $theme in $themes {
+    .App.theme-#{$themeKey} {
+        color: map-get($map: $theme, $key: 'textColor');
+        background-color: map-get($map: $theme, $key: 'backgroundColor');
+
+        scrollbar-color: map-get($map: $theme, $key: 'scrollBarColor') map-get($map: $theme, $key: 'scrollBarBackGroundColor');
+        ::-webkit-scrollbar-thumb {
+            background-color: map-get($map: $theme, $key: "scrollBarColor");
+            outline: 1px solid slategrey;
+        }
+    
+        ::-webkit-scrollbar-thumb:hover {
+            background: map-get($map: $theme, $key: "scrollBarBackGroundColor");
+        }
+
+        button {
+            color: map-get($map: $theme, $key: 'textColor');
+        }
+    }
+}

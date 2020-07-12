@@ -1,0 +1,172 @@
+@import './constants.scss';
+@import './theme/theme.scss';
+
+.section-home {
+    margin-top: 10px;
+
+    .list-panel {
+        // border: 1px solid black;
+        width: 0;
+        overflow: hidden;
+
+        &.is-active {
+            width: 420px;
+        }
+
+        @media screen and (max-width: map-get($map: $breakpoints, $key: 'md')) {
+            &.is-active {
+                width: 360px;
+            }
+        }
+
+        @media screen and (max-width: map-get($map: $breakpoints, $key: 'sm')) {
+            &.is-active {
+                width: 100%;
+            }
+        }
+
+        .list-panel-header {
+            height: 50px;
+        }
+    }
+
+    .list-panel,
+    .content-panel {
+        height: calc(100vh - 55px - 55px - 10px);
+    }
+
+    .content-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: hidden;
+
+        @media screen and (max-width: map-get($map: $breakpoints, $key: 'sm')) {
+            width: 0;
+
+            &.is-active {
+                width: 100%;
+            }
+        }
+
+        .content-panel-header {
+            display: flex;
+            flex-direction: row;
+            height: 50px;
+            .content-panel-header-title {
+                height: 100%;
+                display: flex;
+                align-items: center;
+                font-weight: bold;
+                font-size: 18px;
+                padding-left: 8px;
+                flex: 1;
+            }
+        }
+
+        .content-panel-top {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            .content-panel-body {
+                height: 0;
+                overflow: hidden;
+                &.is-active {
+                    height: calc(100% - 55px);
+                }
+            }
+
+            .content-panel-controller {
+                height: 55px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                flex-grow: 1;
+                overflow: hidden;
+
+                button {
+                    flex: 1;
+                }
+            }
+        }
+
+        .content-panel-bottom {
+            overflow: hidden;
+            height: 50px;
+
+            &.is-active {
+                height: 100%;
+
+                .content-panel-bottom-body {
+                    flex: 1;
+                    overflow-y: scroll;
+                    height: 100%;
+                }
+            }
+
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+
+            .content-panel-bottom-header {
+                height: 50px;
+            }
+
+            .content-panel-bottom-body {
+                flex: 0;
+            }
+        }
+    }
+}
+
+
+@each $themeKey,
+$theme in $themes {
+    .App.theme-#{$themeKey} {
+        .section-home {
+            .list-panel {
+                &.is-active {
+                    border-right: 1px solid map-get($map: $theme, $key: 'primary');
+                    border-left: 1px solid map-get($map: $theme, $key: 'primary');
+                    border-bottom: 1px solid map-get($map: $theme, $key: 'primary');
+                }
+
+                .list-panel-header {
+                    background-color: map-get($map: $theme, $key: 'primary');
+                }
+            }
+
+            .content-panel {
+                .content-panel-header {
+                    background-color: map-get($map: $theme, $key: 'primary');
+                }
+
+                .content-panel-top {
+                    .content-panel-body {
+                        border-bottom: 1px solid map-get($map: $theme, $key: 'primary');
+                    }
+
+                    .content-panel-controller {
+                        border-bottom: 1px solid map-get($map: $theme, $key: 'primary');
+
+                        button {
+                            &:not(:first-of-type) {
+                                border-left: 1px solid map-get($map: $theme, $key: 'primary');
+                            }
+
+                            background-color: map-get($map: $theme, $key: 'secondary');
+                        }
+                    }
+                }
+
+                .content-panel-bottom {
+                    .content-panel-bottom-header {
+                        background-color: map-get($map: $theme, $key: 'primary');
+                    }
+                }
+            }
+        }
+    }
+}
