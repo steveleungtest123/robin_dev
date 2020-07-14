@@ -12,13 +12,13 @@ import rootReducer from 'redux/reducers/index'
 const store = createStore(rootReducer)
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <BrowserRouter>
       <Provider store={store}>
         <App />
       </Provider>
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.Fragment>,
   document.getElementById('root')
 );
 serviceWorker.unregister();

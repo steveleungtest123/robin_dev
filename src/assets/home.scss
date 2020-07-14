@@ -8,7 +8,6 @@
         // border: 1px solid black;
         width: 0;
         overflow: hidden;
-
         &.is-active {
             width: 420px;
         }
@@ -32,7 +31,7 @@
 
     .list-panel,
     .content-panel {
-        height: calc(100vh - 55px - 55px - 10px);
+        height: calc(100vh - 55px - 10px);
     }
 
     .content-panel {
@@ -85,7 +84,6 @@
                 justify-content: center;
                 flex-grow: 1;
                 overflow: hidden;
-
                 button {
                     flex: 1;
                 }
@@ -135,6 +133,9 @@ $theme in $themes {
 
                 .list-panel-header {
                     background-color: map-get($map: $theme, $key: 'primary');
+                }
+                .list-panel-body {
+
                 }
             }
 

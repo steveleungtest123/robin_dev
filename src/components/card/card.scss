@@ -1,10 +1,11 @@
 @import 'assets/theme/theme.scss';
+@import 'assets/constants.scss';
 
 .card {
     min-height: 280px;
-    border: 1px solid black;
     display: flex;
     flex-direction: column;
+    margin-top: 5px;
     .card-header {
         display: flex;
         flex-direction: row;
@@ -14,10 +15,18 @@
     }
     .card-body {
         padding: 4px 24px;
+        &:hover {
+            cursor: pointer;
+            pre {
+                opacity: 0.7;
+            }
+        }
         pre {
+            transition: all .1s ease-in-out;
             word-break: break-word;
             white-space: break-spaces;
             font-size: 16px;
+            line-height: 25px;
         }
     }
     .card-footer {
@@ -36,6 +45,11 @@
         }
         .card-footer-likes {
             flex: 1;
+            button {
+                @media screen and (max-width: map-get($map: $breakpoints, $key: 'md')){
+                    padding: 5px 8px;
+                }
+            }
         }
     }
     .card-expand-controller {
@@ -68,7 +82,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 14px;
+                font-size: 12px;
             }
         }
         &.is-active {
@@ -80,6 +94,10 @@
 @each $themeKey, $theme in $themes {
     .App.theme-#{$themeKey} {
         .card {
+            background-color: map-get($map: $theme, $key: 'secondary');
+            &:not(:last-of-type) {
+                border-bottom: 1px solid map-get($map: $theme, $key: 'primary');
+            }
             .card-expand-controller {
                 &:hover {
                     border-top: 1px solid map-get($map: $theme, $key: 'primary');

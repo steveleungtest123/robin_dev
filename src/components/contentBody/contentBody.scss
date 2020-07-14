@@ -16,7 +16,7 @@
         overflow-y: scroll;
         height: 0;
         &.is-active {
-            height: calc(100vh - 320px - 32px);
+            height: calc(100vh - 320px - 32px + 55px);
         }
         pre {
             line-height: 2.5em;

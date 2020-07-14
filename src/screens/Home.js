@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import 'assets/screens.scss'
+import React, { useState, useEffect, useCallback } from 'react'
+import 'assets/home.scss'
 import { useSelector, useDispatch } from 'react-redux'
 import ListView from 'components/listView/ListView'
 import Card from 'components/card/Card'
+import helpers from 'helpers/helpers'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { IconButton } from '@material-ui/core'
@@ -10,8 +11,7 @@ import { toggleIsView } from 'redux/actions/app'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Button from '@material-ui/core/Button'
-import AllOutIcon from '@material-ui/icons/AllOut';
-import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
+import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ContentBody from 'components/contentBody/ContentBody'
@@ -20,36 +20,56 @@ const Home = () => {
     const appState = useSelector(state => state.appReducer)
     const { isViewListPanel, isViewContentPanel } = appState
     const dispatch = useDispatch()
-    const [isExpandAll, setExpandAll] = useState(false)
     const [chapterInView, setchapterInView] = useState({
-        title: "涼生，我們可不以不悲哀"
+        id: null,
+        title: ''
     })
-    const [stories, setStories] = useState([
-        <Card
-            title="你好嗎"
-            writer="steve"
-            expandAll={isExpandAll}
-            description="<p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-
-            於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>"
-        />
-    ])
+    const [storyPage, setStoryPage] = useState(0)
+    const [isFetchingStory, setFetchingStory] = useState(false)
+    const [isEndFetch, setEndFetch] = useState(false)
+    const [stories, setStories] = useState([])
     const scrollEndCallback = () => {
-        console.log('it is end')
+        console.log('page number: ', storyPage)
+        if (isEndFetch) return
+        setStoryPage(prev => ++prev)
+    }
+    const onClickSetChapterInView = useCallback((story) => {
+        setchapterInView(prev => prev.id !== story.id ? {id: story.id, title: story.title} : prev)
+        // setchapterInView({
+        //     id: story.id,
+        //     title: story.title
+        // })
+        if (helpers.isSm()) {
+            dispatch(toggleIsView(false))
+        }
+    }, [dispatch])
+    const appendCardsIntoList = (res, cardOnClick) => {
+        const cardList = []
+        res.forEach(story => {
+            cardList.push(
+                <Card
+                    key={story.id}
+                    story={story}
+                    onClick={cardOnClick}
+                />
+            )
+        })
+        setStories(old => old.concat(cardList))
     }
     useEffect(() => {
-        setStories([
-            <Card
-                title="涼生，我們可不以不悲哀"
-                writer="steve"
-                expandAll={isExpandAll}
-                description="<p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>"
-            />
-        ])
-    }, [isExpandAll])
-    const [showComments, setShowComments] = useState(true)
+        setFetchingStory(true)
+        fetch(`http://localhost:8080/stories?page=${storyPage}`)
+        .then(res => res.json())
+        .then(json => {
+            if (json.result && json.result.length > 0) {
+                appendCardsIntoList(json.result, onClickSetChapterInView)  
+            } else {
+                setEndFetch(true)
+            }
+            setFetchingStory(false)
+        })
+    }, [onClickSetChapterInView, storyPage, setEndFetch])
+    const [showComments, setShowComments] = useState(false)
     return (
         <div className={`section-home container`}>
             <div className="columns">
@@ -63,17 +83,13 @@ const Home = () => {
                                 <ArrowBackIosIcon />
                             </IconButton>
                         }
-                        <IconButton
-                            onClick={() => setExpandAll(!isExpandAll)}
-                        >
-                            <AllOutIcon />
-                        </IconButton>
                     </div>
                     <div className="list-panel-body">
                         <ListView
                             items={stories}
-                            isEnd={true}
-                            isLoading={true}
+                            isEnd={isEndFetch}
+                            isLoading={isFetchingStory}
+                            scrollEndCallback={scrollEndCallback}
                         />
                     </div>
                 </div>
@@ -88,11 +104,11 @@ const Home = () => {
                             </IconButton>
                         }
                         {
-                            chapterInView && chapterInView.title && <div className="content-panel-header-title">{chapterInView.title}</div>
+                            <div className="content-panel-header-title">{chapterInView.title}</div>
                         }
                         <div className="content-panel-header-likes">
                             <IconButton>
-                                <FavoriteOutlinedIcon />
+                                <FavoriteBorderOutlinedIcon />
                             </IconButton>
                             <IconButton>
                                 <ThumbUpAltOutlinedIcon />
@@ -106,23 +122,7 @@ const Home = () => {
                         <div className={`content-panel-body ${!showComments ? 'is-active' : ''}`}>
                             <ContentBody
                                 showComments={showComments} 
-                                content="<p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p><p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>
-                                <p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>
-                                <p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>
-                                <p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>
-                                <p>一個農民從洪水中救起了他的妻子，他的孩子卻被淹死了。事後，人們議論紛紛。有的說他做得對，因為孩子可以再生一個，妻子卻不能死而復活;有的說他做錯了，因為妻子可以另娶一個，孩子卻不能死而復活。我聽了人們的議論，也感到疑惑難決：如果只能救活一人，究竟應該救妻子呢，還是救孩子?
-    
-                                於是我去拜訪那個農民，問他當時是怎麼想的。他答道：「我什麼也沒想。洪水襲來，妻子在我身過，我抓住她就往附近的山坡游。當我返回時，孩子已經被洪水沖走了」。</p>"
+                                chapterInView={chapterInView}
                             />
                         </div>
                         <div className="content-panel-controller">

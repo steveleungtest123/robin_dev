@@ -4,17 +4,16 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ThemifiedSwitch from 'components/switch/ThemifiedSwitch'
 import { IconButton } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleDarkMode } from 'redux/actions/app';
-import { darkTextColor, lightTextColor } from 'assets/theme/theme.scss'
+import { toggleDarkMode, toggleLeftDrawer } from 'redux/actions/app';
 
 const Appbar = () => {
     const appState = useSelector(state => state.appReducer)
     const dispatch = useDispatch()
-    console.log(appState.isDark ? darkTextColor : lightTextColor)
     return (
         <div className="app-bar container">
             <div className="app-bar-start">
                 <IconButton
+                    onClick={() => dispatch(toggleLeftDrawer(true))}
                 >
                     <MenuIcon
                     />

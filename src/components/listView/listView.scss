@@ -1,5 +1,5 @@
 .list-view {
-    height: 100%;
+    height: calc(100vh - 55px - 55px - 10px);
     overflow-y: scroll;
     padding-bottom: 80px;
     .list-view-loading {
