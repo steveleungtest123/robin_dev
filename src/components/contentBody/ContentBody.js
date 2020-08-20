@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import './contentBody.scss'
+import api from 'api/api'
 
 const ContentBody = (props) => {
     const {
@@ -9,7 +10,7 @@ const ContentBody = (props) => {
     const [chapter, setChapter] = useState({})
     const fetchChapter = useCallback(() => {
         if (!chapterInView.id) return
-        fetch(`http://localhost:8080/chapters?storyId=${chapterInView.id}`)
+        fetch(`${api.domain}chapters?storyId=${chapterInView.id}`)
         .then(res => res.json())
         .then(json => {
             storeResult(json.result)

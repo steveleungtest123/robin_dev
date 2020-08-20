@@ -5,6 +5,7 @@ import { toggleLeftDrawer } from 'redux/actions/app'
 import { useHistory } from 'react-router-dom'
 import PopupModal from 'components/popupModal/PopupModal'
 import Login from 'components/login/Login'
+import { Button } from '@material-ui/core'
 
 const DrawerLeft = () => {
     const appState = useSelector(state => state.appReducer)
@@ -63,9 +64,17 @@ const DrawerLeft = () => {
         <PopupModal 
             open={showPopupModal}
             handleClose={callPopup}
+            title="登入"
+            actions={
+                <>
+                    <button className="button primary">登入</button>
+                    <button className="button outlined">註冊</button>
+                </>
+            }
         >
             <Login />
         </PopupModal>
+        
         </>
     )
 }

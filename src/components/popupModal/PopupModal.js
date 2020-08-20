@@ -4,32 +4,52 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button,
-    Typography
+    makeStyles,
+    Typography,
+    IconButton
 } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close';
+
+import './popupModal.scss'
+
+const useStyles = makeStyles(theme => ({
+    root: {
+    },
+    content: {
+
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500]
+    }
+}))
 
 const PopupModal = (props) => {
     const {
         open,
         handleClose
     } = props
+    const classes = useStyles()
     return (
 
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog className={classes.root} open={open} onClose={handleClose}>
             <DialogTitle onClose={handleClose}>
-                Modal title
-                </DialogTitle>
-            <DialogContent dividers>
+                <Typography>{props.title}</Typography>
+                <IconButton 
+                    aria-label="close" 
+                    className={classes.closeButton}
+                    onClick={handleClose}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent dividers className={classes.content}>
                 {props.children}
-                {/* <Typography gutterBottom>
-                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                    in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                    </Typography> */}
             </DialogContent>
             <DialogActions>
-                <Button autoFocus onClick={handleClose} color="primary">
-                    Save changes
-                    </Button>
+                {props.actions}
             </DialogActions>
         </Dialog>
 

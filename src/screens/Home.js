@@ -15,6 +15,7 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ContentBody from 'components/contentBody/ContentBody'
+import api from 'api/api'
 
 const Home = () => {
     const appState = useSelector(state => state.appReducer)
@@ -58,7 +59,7 @@ const Home = () => {
     }
     useEffect(() => {
         setFetchingStory(true)
-        fetch(`http://localhost:8080/stories?page=${storyPage}`)
+        fetch(`${api.domain}stories?page=${storyPage}`)
         .then(res => res.json())
         .then(json => {
             if (json.result && json.result.length > 0) {

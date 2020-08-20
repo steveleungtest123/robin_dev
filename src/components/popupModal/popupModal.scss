@@ -1,0 +1,9 @@
+@import 'assets/theme/theme.scss';
+
+@each $themeKey, $theme in $themes {
+    .App.theme-#{$themeKey} {
+        .popup-modal {
+            
+        }
+    }
+}
