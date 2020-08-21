@@ -8,6 +8,7 @@ const ContentBody = (props) => {
         showComments,
     } = props
     const [chapter, setChapter] = useState({})
+    console.log(api.domain)
     const fetchChapter = useCallback(() => {
         if (!chapterInView.id) return
         fetch(`${api.domain}chapters?storyId=${chapterInView.id}`)

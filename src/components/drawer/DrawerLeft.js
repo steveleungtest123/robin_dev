@@ -5,20 +5,30 @@ import { toggleLeftDrawer } from 'redux/actions/app'
 import { useHistory } from 'react-router-dom'
 import PopupModal from 'components/popupModal/PopupModal'
 import Login from 'components/login/Login'
-import { Button } from '@material-ui/core'
+import Register from 'components/register/Register'
+import { Popper } from '@material-ui/core'
 
 const DrawerLeft = () => {
     const appState = useSelector(state => state.appReducer)
     const dispatch = useDispatch()
     const history = useHistory()
-    const [showPopupModal, setPopupModal] = useState(false)
+    const [showLoginModal, setLoginModal] = useState(false)
+    const [showRegisterModal, setRegisterModal] = useState(false)
     const navigateTo = (path) => {
         dispatch(toggleLeftDrawer(false))
         history.push(path)
     }
-    const callPopup = () => {
-        // dispatch(toggleLeftDrawer(false))
-        setPopupModal(prev => !prev)
+    const callLoginPopup = () => {
+        setLoginModal(prev => !prev)
+    }
+    const callRegisterPopup = () => {
+        setRegisterModal(prev => !prev)
+    }
+    const submitLogin = (data) => {
+        
+    }
+    const submitRegister = (data) => {
+
     }
     return (
         <>
@@ -36,7 +46,7 @@ const DrawerLeft = () => {
                         首頁
                     </div>
                     <div className="drawer-list-button"
-                        onClick={() => callPopup()}
+                        onClick={() => callLoginPopup()}
                     >
                         登入 / 註冊
                     </div>
@@ -62,19 +72,24 @@ const DrawerLeft = () => {
             ></div>
         </div>
         <PopupModal 
-            open={showPopupModal}
-            handleClose={callPopup}
+            open={showLoginModal}
+            handleClose={callLoginPopup}
             title="登入"
-            actions={
-                <>
-                    <button className="button primary">登入</button>
-                    <button className="button outlined">註冊</button>
-                </>
-            }
         >
-            <Login />
+            <Login 
+                callRegisterPopup={callRegisterPopup}
+                handleClose={callLoginPopup}
+            />
         </PopupModal>
-        
+        <PopupModal
+            open={showRegisterModal}
+            handleClose={callRegisterPopup}
+            title="註冊"
+        >
+            <Register 
+                handleClose={callRegisterPopup}
+            />
+        </PopupModal>
         </>
     )
 }
