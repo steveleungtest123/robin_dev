@@ -43,4 +43,21 @@ api.mergeParam = (param) => {
     }
     return str.join('&')
 }
+
+api.sqlErrorMessage = (error) => {
+    console.log(error)
+    let errorMsg = {
+        msg: "",
+        key: "",
+        value: ""
+    }
+    if (error.code === "ER_DUP_ENTRY") {
+        errorMsg = {
+            msg: error.message,
+            key: error.message.match(/'\w+'/g)[0],
+            value: error.message.match(/'\w+'/g)[1]
+        }
+    }
+    return errorMsg
+}
 export default api

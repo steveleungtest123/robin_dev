@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import './register.scss'
-import { TextField, makeStyles, Typography } from '@material-ui/core'
+import { TextField, makeStyles, Typography, InputAdornment, IconButton } from '@material-ui/core'
 import account from 'helpers/account'
 import api from 'api/api'
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const useStyles = makeStyles(theme => ({
     form: {
@@ -32,126 +34,113 @@ const useStyles = makeStyles(theme => ({
 
 const Register = ({ handleClose, submitFormAction }) => {
     const classes = useStyles()
-    const [enableSubmit, setEnableSubmit] = useState(true)
-    const [pass, setPass] = useState({
-        accountId: false,
-        nickname: false,
-        accountEmail: false,
-        password: false,
-        passwordCheck: false
-    })
-    const [accountId, setAccountId] = useState({
-        value: '',
-        helperText: ''
-    })
-    const [nickname, setNickname] = useState({
-        value: '',
-        helperText: ''
-    })
-    const [accountEmail, setAccountEmail] = useState({
-        value: '',
-        helperText: ''
-    })
-    const [password, setPassword] = useState({
-        value: '',
-        helperText: ''
-    })
-    const [passwordCheck, setPasswordCheck] = useState({
-        value: '',
-        helperText: ''
-    })
-    const checkSubmitButton = () => {
-        console.log(pass)
-        for (let key in pass) {
-
-            if (!pass[key]) return setEnableSubmit(true)
+    const [disableSubmit, setDisableSubmit] = useState(true)
+    const [showPassword, setShowPassword] = useState(false)
+    const [inputs, setInputs] = useState({
+        accountId: {
+            required: true,
+            value: '',
+            helperText: '',
+            valid: false
+        },
+        nickname: {
+            required: true,
+            value: '',
+            helperText: '',
+            valid: false
+        },
+        accountEmail: {
+            required: true,
+            value: '',
+            helperText: '',
+            valid: false
+        },
+        password: {
+            required: true,
+            value: '',
+            helperText: '',
+            valid: false
+        },
+        passwordCheck: {
+            required: true,
+            value: '',
+            helperText: '',
+            valid: false
         }
-        return setEnableSubmit(false)
+    })
+    const inputOnChange = (key, value) => {
+        let res = {}
+        switch (key) {
+            case 'accountId':
+                res = account.checkUserName(value)
+                break;
+            case 'nickname':
+                res = account.checkNickname(value)
+                break;
+            case 'accountEmail':
+                res = account.checkEmail(value)
+                break;
+            default:
+                res = { error: 'Unexpected Error', hint: '! not input fields' }
+        }
+        const newInputs = { ...inputs }
+        newInputs[key].value = value
+        newInputs[key].helperText = res.hint
+        newInputs[key].valid = res.error ? false : true
+        setDisableSubmit(!checkSumbitButton(newInputs))
+        setInputs(newInputs)
+    }
+    const passwordOnchange = (key, value) => {
+        const newInputs = {...inputs}
+        newInputs[key].value = value
+        const pwdValidate1 = account.checkPassword(newInputs.password.value)
+        const pwdValidate2 = account.checkPassword(newInputs.passwordCheck.value)
+        const pwdConfirm = account.checkIsEqual(newInputs.password.value, newInputs.passwordCheck.value)
+        newInputs.password.helperText = pwdValidate1.error ? 
+                                            pwdValidate1.hint :
+                                        pwdConfirm.error ?
+                                            pwdConfirm.hint :
+                                            null
+        newInputs.password.valid = pwdValidate1.error ? false : true
+        newInputs.passwordCheck.helperText = pwdValidate2.error ? 
+                                            pwdValidate2.hint :
+                                        pwdConfirm.error ?
+                                            pwdConfirm.hint :
+                                            null
+        newInputs.passwordCheck.valid = pwdValidate2.error ? false : true
+        setDisableSubmit(!checkSumbitButton(newInputs))
+        setInputs(newInputs)
+    }
+    const checkSumbitButton = (theInputs) => {
+        var temp = theInputs ? theInputs : inputs
+        for (var key in temp) {
+            if (temp[key].required && !temp[key].valid) return false
+        }
+        return true
     }
     const submitRegister = () => {
+        for (let key in inputs) {
+            if (!inputs[key].valid) return
+        }
         const param = {
-            username: accountId.value,
-            email: accountEmail.value,
-            password: password.value,
-            nickname: nickname.value
+            username: inputs.accountId.value,
+            nickname: inputs.nickname.value,
+            password: inputs.password.value,
+            email: inputs.accountEmail.value
         }
-        const url = "/users/register"
+        const url = api.domain + '/users/register'
         const successCallback = (res) => {
-            console.log(res)
+            if (res.error) {
+                let msg = api.sqlErrorMessage(res.error)
+                console.log(msg)
+                return
+            }
+            if (submitFormAction) submitFormAction(res)
         }
-        console.log(param)
         const failCallback = (err) => {
             console.log(err)
         }
-        console.log(api.domain + url)
-        api.postRequest(api.domain + url, param, {}, successCallback, failCallback)
-    }
-    const usernameOnChange = (val) => {
-        const ac = account.checkUserName(val)
-        setPass(prev => ({ ...prev, accountId: ac.error ? false : true }))
-        setAccountId({
-            helperText: ac.hint,
-            value: val
-        })
-        checkSubmitButton()
-    }
-    const emailOnChange = (val) => {
-        const email = account.checkEmail(val)
-        setPass(prev => ({ ...prev, accountEmail: email.error ? false : true }))
-        setAccountEmail({
-            helperText: email.hint,
-            value: val
-        })
-        checkSubmitButton()
-    }
-    const passwordOnChange = (val) => {
-        const pwd = account.checkPassword(val)
-        const pwdC = account.checkIsEqual(val, passwordCheck.value)
-        setPass(prev => ({
-            ...prev,
-            password: pwd.error ? false : true,
-            passwordCheck: pwdC.error ? false : true
-        }))
-        setPassword({
-            helperText: pwd.hint ? pwd.hint : pwdC.hint ? pwdC.hint : null,
-            value: val
-        })
-        setPasswordCheck(prev => ({
-            helperText: pwdC.hint,
-            value: prev.value
-        }))
-        checkSubmitButton()
-    }
-    const passwordCheckOnChange = (val) => {
-        const pwdC = account.checkIsEqual(password.value, val)
-        console.log('pwdC: ', pwdC)
-        setPass(prev => ({
-            ...prev,
-            passwordCheck: pwdC.error ? false : true
-        }))
-
-        setPassword(prev => ({
-            helperText: pwdC.hint,
-            value: prev.value
-        }))
-
-        setPasswordCheck({
-            helperText: pwdC.hint,
-            value: val
-        })
-        checkSubmitButton()
-    }
-    const nicknameOnChange = (val) => {
-        const nn = account.checkNickname(val)
-        setPass(prev => ({
-            ...prev,
-            nickname: nn.error ? false : true
-        }))
-        setNickname({
-            helperText: nn.hint,
-            value: val
-        })
-        checkSubmitButton()
+        api.postRequest(url, param, {}, successCallback, failCallback)
     }
     return (
         <div className="register-form">
@@ -161,62 +150,71 @@ const Register = ({ handleClose, submitFormAction }) => {
                     id="accountId"
                     label="用戶帳號"
                     variant="outlined"
-                    helperText={accountId.helperText}
-                    value={accountId.value}
-                    onChange={(e) => usernameOnChange(e.target.value)}
-                    error={accountId.helperText ? true : false}
+                    helperText={inputs.accountId.helperText}
+                    onChange={(e) => inputOnChange('accountId', e.target.value)}
+                    error={inputs.accountId.helperText ? true : false}
                 />
                 <TextField
                     className={classes.input}
                     id="nickname"
                     label="用戶匿稱"
                     variant="outlined"
-                    helperText={nickname.helperText}
-                    value={nickname.value}
-                    onChange={(e) => nicknameOnChange(e.target.value)}
-                    error={nickname.helperText ? true : false}
+                    helperText={inputs.nickname.helperText}
+                    onChange={(e) => inputOnChange('nickname', e.target.value)}
+                    error={inputs.nickname.helperText ? true : false}
                 />
                 <TextField
                     className={classes.input}
-                    id="acountEmail"
+                    id="accountEmail"
                     label="電郵地址"
                     variant="outlined"
-                    helperText={accountEmail.helperText}
-                    value={accountEmail.value}
-                    onChange={(e) => emailOnChange(e.target.value)}
-                    error={accountEmail.helperText ? true : false}
+                    helperText={inputs.accountEmail.helperText}
+                    onChange={(e) => inputOnChange('accountEmail', e.target.value)}
+                    error={inputs.accountEmail.helperText ? true : false}
                 />
                 <TextField
                     className={classes.input}
-                    type="password"
-                    id="accountPassword"
+                    type={showPassword ? "text" : "password"}
+                    id="password"
                     label="密碼"
                     variant="outlined"
                     autoComplete="off"
-                    helperText={password.helperText}
-                    value={password.value}
-                    onChange={(e) => passwordOnChange(e.target.value)}
-                    error={password.helperText ? true : false}
+                    helperText={inputs.password.helperText}
+                    onChange={(e) => passwordOnchange('password', e.target.value)}
+                    error={inputs.password.helperText ? true : false}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="end">
+                            <IconButton onClick={() => setShowPassword(prev => !prev)}>
+                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                        </InputAdornment>
+                    }}
                 />
                 <TextField
                     className={classes.input}
-                    type="password"
-                    id="accountPasswordCheck"
+                    type={showPassword ? "text" : "password"}
+                    id="passwordCheck"
                     label="再次輸入密碼"
                     variant="outlined"
                     autoComplete="off"
-                    helperText={passwordCheck.helperText}
-                    value={passwordCheck.value}
-                    onChange={(e) => passwordCheckOnChange(e.target.value)}
-                    error={passwordCheck.helperText ? true : false}
+                    helperText={inputs.passwordCheck.helperText}
+                    onChange={(e) => passwordOnchange('passwordCheck', e.target.value)}
+                    error={inputs.passwordCheck.helperText ? true : false}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="end">
+                            <IconButton onClick={() => setShowPassword(prev => !prev)}>
+                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                        </InputAdornment>
+                    }}
                 />
 
                 <div className={classes.formControl}>
-                    <button 
-                        className="button" 
-                        type="button" 
+                    <button
+                        className="button"
+                        type="button"
                         onClick={submitRegister}
-                        disabled={enableSubmit}
+                        disabled={disableSubmit}
                     >
                         註冊
                     </button>
