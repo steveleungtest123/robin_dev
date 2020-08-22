@@ -59,7 +59,19 @@ const Home = () => {
     }
     useEffect(() => {
         setFetchingStory(true)
-        fetch(`${api.domain}stories?page=${storyPage}`)
+        const url = api.domain + `/stories`
+        const successCallback = function(json) {
+            console.log(json)
+            if (json.result && json.result.length > 0) {
+                appendCardsIntoList(json.result, onClickSetChapterInView)  
+            } else {
+                setEndFetch(true)
+            }
+            setFetchingStory(false)
+        }
+        api.getRequest(url, {page: storyPage}, {}, successCallback)
+        /*
+        fetch(`${api.domain}/stories?page=${storyPage}`)
         .then(res => res.json())
         .then(json => {
             if (json.result && json.result.length > 0) {
@@ -68,7 +80,7 @@ const Home = () => {
                 setEndFetch(true)
             }
             setFetchingStory(false)
-        })
+        })*/
     }, [onClickSetChapterInView, storyPage, setEndFetch])
     const [showComments, setShowComments] = useState(false)
     return (

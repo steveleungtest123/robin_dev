@@ -3,32 +3,36 @@ const api = {}
 api.domain = process.env.REACT_APP_API_URL
 
 api.postRequest = (url, param, headers, successCallback, failCallback) => {
-    fetch({
+    console.log(url)
+    fetch(url, {
         method: 'POST',
-        url: url,
-        data: JSON.stringify(param),
-        headers: headers
-    }).then(res => {
-        console.log(res)
-        if (res.error == null) failCallback(res.result)
-        else successCallback(res.result)
-    }).catch(err => {
-        console.log(err)
+        body: JSON.stringify(param),
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers
+        }
     })
+    .then(res => res.json())
+    .then(json => {
+        if (successCallback) successCallback(json)
+    })
+    .catch(err => failCallback ? failCallback(err) : null)
 }
 
 api.getRequest = (url, param, headers, successCallback, failCallback) => {
     const data = api.mergeParam(param)
-    fetch({
+    console.log(url + '?' + data)
+    fetch(url + '?' + data, {
         method: 'GET',
-        url: url + '?' + data,
-        headers: headers
-    }).then(res => {
-        console.log(res)
-        if (res.error == null) failCallback(res.result)
-        else successCallback(res.result)
+        headers: {
+            ...headers
+        }
+    })
+    .then(res => res.json())
+    .then(json => {
+        if (successCallback) successCallback(json)
     }).catch(err => {
-        console.log(err)
+        if (failCallback) failCallback(err)
     })
 }
 

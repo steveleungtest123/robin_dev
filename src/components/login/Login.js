@@ -6,7 +6,9 @@ const useStyles = makeStyles(theme => ({
     form: {
         display: 'flex',
         flexDirection: 'column',
-        minWidth: '315px'
+        [theme.breakpoints.up('md')]: {
+            minWidth: '315px'
+        }
     },
     input: {
         '&:not(:first-of-type)': {
