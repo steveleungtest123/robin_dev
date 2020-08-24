@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './register.scss'
-import { TextField, makeStyles, Typography, InputAdornment, IconButton } from '@material-ui/core'
+import { TextField, makeStyles, InputAdornment, IconButton } from '@material-ui/core'
 import account from 'helpers/account'
 import api from 'api/api'
 import Visibility from '@material-ui/icons/Visibility';
@@ -229,7 +229,7 @@ const Register = ({ handleClose, submitFormAction }) => {
 
                 <div className={classes.formControl}>
                     <button
-                        className="button"
+                        className="button primary"
                         type="button"
                         onClick={submitRegister}
                         disabled={disableSubmit}

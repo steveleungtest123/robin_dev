@@ -16,7 +16,7 @@ ReactDOM.render(
   <React.Fragment>
     <BrowserRouter>
       <Provider store={store}>
-        <SnackbarProvider maxSnack={5}>
+        <SnackbarProvider maxSnack={5} autoHideDuration={3000}>
           <App />
         </SnackbarProvider>
       </Provider>
