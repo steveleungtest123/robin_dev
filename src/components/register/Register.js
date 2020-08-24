@@ -5,6 +5,8 @@ import account from 'helpers/account'
 import api from 'api/api'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { useSnackbar } from 'notistack'
+
 
 const useStyles = makeStyles(theme => ({
     form: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 const Register = ({ handleClose, submitFormAction }) => {
     const classes = useStyles()
+    const { enqueueSnackbar } = useSnackbar() 
     const [disableSubmit, setDisableSubmit] = useState(true)
     const [showPassword, setShowPassword] = useState(false)
     const [inputs, setInputs] = useState({
@@ -118,6 +121,16 @@ const Register = ({ handleClose, submitFormAction }) => {
         }
         return true
     }
+    const callSnackbar = (msg, variant) => {
+        enqueueSnackbar(msg, {
+            variant
+            /*
+                variant: 'warning', //warning, success, error, info
+                autoHideDuration: 3000,
+                preventDuplicate: true
+            */
+        })
+    }
     const submitRegister = () => {
         for (let key in inputs) {
             if (!inputs[key].valid) return
@@ -131,11 +144,16 @@ const Register = ({ handleClose, submitFormAction }) => {
         const url = api.domain + '/users/register'
         const successCallback = (res) => {
             if (res.error) {
-                let msg = api.sqlErrorMessage(res.error)
-                console.log(msg)
+                let sqlError = api.sqlErrorMessage(res.error)
+                callSnackbar(sqlError.msg, 'error')
                 return
             }
-            if (submitFormAction) submitFormAction(res)
+            callSnackbar('註冊成功!', 'success')
+            callSnackbar('自動登入中...', 'info')
+            if (submitFormAction) {
+                submitFormAction(param)
+            }
+            handleClose()
         }
         const failCallback = (err) => {
             console.log(err)

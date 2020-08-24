@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { SnackbarProvider } from 'notistack'
 
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
@@ -15,7 +16,9 @@ ReactDOM.render(
   <React.Fragment>
     <BrowserRouter>
       <Provider store={store}>
-        <App />
+        <SnackbarProvider maxSnack={5}>
+          <App />
+        </SnackbarProvider>
       </Provider>
     </BrowserRouter>
   </React.Fragment>,
