@@ -10,6 +10,7 @@ import { Popper } from '@material-ui/core'
 
 const DrawerLeft = () => {
     const appState = useSelector(state => state.appReducer)
+    const userState = useSelector(state => state.userReducer)
     const dispatch = useDispatch()
     const history = useHistory()
     const [showLoginModal, setLoginModal] = useState(false)
@@ -45,11 +46,14 @@ const DrawerLeft = () => {
                     >
                         首頁
                     </div>
-                    <div className="drawer-list-button"
-                        onClick={() => callLoginPopup()}
-                    >
-                        登入 / 註冊
-                    </div>
+                    {
+                        userState.userInfo === {} && 
+                        <div className="drawer-list-button"
+                            onClick={() => callLoginPopup()}
+                        >
+                            登入 / 註冊
+                        </div>
+                    }
                     <div className="drawer-list-button">
                         發表新故事
                     </div>
@@ -65,6 +69,10 @@ const DrawerLeft = () => {
                     <div className="drawer-list-button">
                         記錄
                     </div>
+                    {
+                        userState.userInfo !== {} &&
+                        <div className="drawer-list-button" style={{backgroundColor: '#FA533A', color: 'white'}}>登出</div>
+                    }
                 </div>
             </div>
             <div className="drawer-overlay"

@@ -6,7 +6,7 @@ const initialState = {
     isDark: false,
     isViewListPanel: true,
     isViewContentPanel: false,
-    isShowLeftDrawer: false
+    isShowLeftDrawer: false,
 }
 
 const appReducer = (state = initialState, action) => {

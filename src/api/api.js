@@ -10,10 +10,12 @@ api.postRequest = (url, param, headers, successCallback, failCallback) => {
         headers: {
             'Content-Type': 'application/json',
             ...headers
-        }
+        },
+        credentials: 'include'
     })
     .then(res => res.json())
     .then(json => {
+        console.log(json)
         if (successCallback) successCallback(json)
     })
     .catch(err => failCallback ? failCallback(err) : null)
@@ -26,7 +28,8 @@ api.getRequest = (url, param, headers, successCallback, failCallback) => {
         method: 'GET',
         headers: {
             ...headers
-        }
+        },
+        credentials: 'include'
     })
     .then(res => res.json())
     .then(json => {

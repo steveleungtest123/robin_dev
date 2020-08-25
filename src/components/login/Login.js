@@ -6,6 +6,9 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import account from 'helpers/account'
 import api from 'api/api';
 import { useSnackbar } from 'notistack'
+import {  useDispatch, useSelector } from 'react-redux';
+import { userLogin } from 'redux/actions/user';
+import { toggleLeftDrawer } from 'redux/actions/app';
 
 const useStyles = makeStyles(theme => ({
     form: {
@@ -31,6 +34,9 @@ const useStyles = makeStyles(theme => ({
 
 const Login = ({callRegisterPopup, submitFormAction, handleClose}) => {
     const classes = useStyles()
+    const userReducer = useSelector(state => state.userReducer)
+    console.log(userReducer)
+    const dispatch = useDispatch()
     const [showPassword, setShowPassword] = useState(false)
     const { enqueueSnackbar } = useSnackbar() 
     const [inputs, setInputs] = useState({
@@ -83,10 +89,12 @@ const Login = ({callRegisterPopup, submitFormAction, handleClose}) => {
         }
         const url = api.domain + '/users/login'
         const successCallback = (res) => {
-            console.log('login: ', res)
             enqueueSnackbar('登入成功，歡迎你' + res.result[0].nickname, {
                 variant: 'success'
             })
+            dispatch(userLogin(res.result[0]))
+            dispatch(toggleLeftDrawer(false))
+            handleClose()
         }
         const failCallback = (err) => {
             console.log('login: ', err)
