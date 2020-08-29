@@ -15,6 +15,7 @@ const DrawerLeft = () => {
     const history = useHistory()
     const [showLoginModal, setLoginModal] = useState(false)
     const [showRegisterModal, setRegisterModal] = useState(false)
+    console.log(userState)
     const navigateTo = (path) => {
         dispatch(toggleLeftDrawer(false))
         history.push(path)
@@ -47,7 +48,7 @@ const DrawerLeft = () => {
                         首頁
                     </div>
                     {
-                        userState.userInfo === {} && 
+                        userState.userInfo == null && 
                         <div className="drawer-list-button"
                             onClick={() => callLoginPopup()}
                         >
@@ -70,7 +71,7 @@ const DrawerLeft = () => {
                         記錄
                     </div>
                     {
-                        userState.userInfo !== {} &&
+                        userState.userInfo !== null &&
                         <div className="drawer-list-button" style={{backgroundColor: '#FA533A', color: 'white'}}>登出</div>
                     }
                 </div>
