@@ -3,6 +3,8 @@ import './switch.scss'
 import Switch from '@material-ui/core/Switch'
 import { withStyles } from '@material-ui/core/styles'
 
+//It is swtich button
+//add new
 
 const ThemifiedSwitch = (props) => {
     const ColoredSwitch = withStyles({
